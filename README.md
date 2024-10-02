@@ -1,4 +1,4 @@
-# NEMA-17 Space Tracker - Deep Space Object Tracking
+# NEMA-17 Space Tracker - Deep Space and Planetary Object Tracking
 
 ## Component Links
 
@@ -7,10 +7,14 @@
 - [Amazon Link - Arduino Uno](https://www.amazon.com/ELEGOO-Board-ATmega328P-ATMEGA16U2-Compliant/dp/B01EWOE0UU/)
 - [Amazon Link - 3S LiPo Battery](https://www.amazon.com/Connector-Airplane-Helicopter-Quadcopter-Multi-Motor/dp/B07L6BNTDV/)
 - [Amazon Link - Buck Converter](https://www.amazon.com/DWEII-Current-Converter-Adjustable-Regulator/dp/B09XHSCC9G/)
+- [Amazon Link - SPDT Switches](https://www.amazon.com/Position-Breadboard-Electronic-Miniature-SlideSwitch/dp/B09R43HCY3/)
 
 ## Overview
 
-This project implements a star tracker for astrophotography using an Arduino, a NEMA 17 stepper motor, and an A4988 stepper motor driver. The system is designed to counteract Earth's rotation, allowing for long-exposure photographs of deep space objects. It's powered by a LiPo battery and uses voltage converters for efficient power management.
+This project implements a versatile star tracker for astrophotography using an Arduino, a NEMA 17 stepper motor, and an A4988 stepper motor driver. The system is designed to counteract Earth's rotation, allowing for long-exposure photographs of both deep space objects and planets. It's powered by a LiPo battery and uses voltage converters for efficient power management. The tracker features two SPDT switches for easy configuration:
+
+1. NS Switch: Selects between Northern and Southern hemisphere tracking.
+2. TARGET Switch: Toggles between deep space object and planetary tracking rates.
 
 ## Hardware Requirements
 
@@ -22,7 +26,8 @@ This project implements a star tracker for astrophotography using an Arduino, a 
   - Resistance: 1.4ohms
 - A4988 Stepper Motor Driver
 - 3S LiPo battery (11.1V nominal, 7000mAh capacity)
-- Buck converter (to step down battery voltage for Arduino and driver)
+- Buck converter (to step down battery voltage for Arduino Uno)
+- 2x SPDT switches (for NS and TARGET selection)
 - Appropriate wiring and connectors
 
 ## Power Management
@@ -38,14 +43,16 @@ This project implements a star tracker for astrophotography using an Arduino, a 
 
 ## Pin Configuration
 
-| Component | Arduino Pin |
-| --------- | ----------- |
-| STEP      | 3           |
-| DIR       | 2           |
-| MS1       | 5           |
-| MS2       | 6           |
-| MS3       | 7           |
-| ENABLE    | 8           |
+| Component     | Arduino Pin |
+| ------------- | ----------- |
+| STEP          | 3           |
+| DIR           | 2           |
+| MS1           | 5           |
+| MS2           | 6           |
+| MS3           | 7           |
+| ENABLE        | 8           |
+| NS Switch     | 4           |
+| TARGET Switch | 9           |
 
 ## Setup Instructions
 
@@ -57,12 +64,15 @@ This project implements a star tracker for astrophotography using an Arduino, a 
    - Connect the buck converter output (set to 5V) to the Arduino's VIN and GND pins.
    - Connect the battery directly to the VMOT and GND pins of the A4988 driver.
    - Connect the 5V output from the buck converter to the VDD pin of the A4988 driver.
-5. Upload the provided code to your Arduino board.
+5. Connect the SPDT switches:
+   - NS Switch: Connect the common terminal to Arduino digital pin 4, one side to GND, and the other to 5V.
+   - TARGET Switch: Connect the common terminal to Arduino digital pin 9, one side to GND, and the other to 5V.
+6. Upload the provided code to your Arduino board.
 
 ## Code Structure
 
-- `setup()`: Initializes the stepper motor, sets up microstepping, and configures motor speed.
-- `loop()`: Continuously runs the motor at the calculated speed for tracking.
+- `setup()`: Initializes the stepper motor, sets up microstepping, configures motor speed, and sets up the NS and TARGET switch pins.
+- `loop()`: Continuously runs the motor at the calculated speed for tracking, checking both switch states to determine direction and tracking rate.
 
 ## Key Parameters
 
@@ -70,12 +80,28 @@ This project implements a star tracker for astrophotography using an Arduino, a 
 - `MICROSTEPS`: Microstepping configuration (default: 16)
 - `GEAR_RATIO`: Any additional gearing (default: 1, no additional gearing)
 - `EARTH_ROTATION_RATE`: Earth's rotation rate in degrees per hour (15.0)
+- `PLANET_RATE_ADJUSTMENT`: Adjustment for planetary tracking (default set for Jupiter)
+- `NS_SWITCH_PIN`: The pin number for the North/South hemisphere selection switch (default: 4)
+- `TARGET_SWITCH_PIN`: The pin number for the deep space/planetary target selection switch (default: 9)
 
 ## Customization
 
 - Adjust `MICROSTEPS` to change the microstepping configuration.
 - Modify `GEAR_RATIO` if you're using any external gearing.
 - Fine-tune `EARTH_ROTATION_RATE` for more precise tracking if needed.
+- Adjust `PLANET_RATE_ADJUSTMENT` for different planets or specific dates.
+- Modify `NS_SWITCH_PIN` and `TARGET_SWITCH_PIN` if you connect the switches to different digital pins.
+
+## Switch Functionality
+
+1. NS Switch:
+
+   - HIGH (default): Set for Northern Hemisphere tracking (clockwise rotation)
+   - LOW: Set for Southern Hemisphere tracking (counter-clockwise rotation)
+
+2. TARGET Switch:
+   - HIGH (default): Set for deep space object tracking (sidereal rate)
+   - LOW: Set for planetary tracking (adjusted rate, default for Jupiter)
 
 ## Power Consumption and Battery Life
 
@@ -88,9 +114,8 @@ This project implements a star tracker for astrophotography using an Arduino, a 
 The code includes optional serial output for debugging. Open the Serial Monitor in the Arduino IDE to view:
 
 - Initialization confirmation
-- Steps per revolution
-- Steps per hour
-- Current position (printed every 10 seconds during operation)
+- Steps per hour for sidereal and planetary tracking
+- Current position, hemisphere, and target type (printed every 10 seconds during operation)
 
 ## Safety Considerations
 
@@ -98,14 +123,16 @@ The code includes optional serial output for debugging. Open the Serial Monitor 
 - Adjust the current limit on the A4988 to match your motor's specifications.
 - Use caution when handling LiPo batteries. Follow proper charging and storage procedures.
 - Ensure the buck converter is properly set to 5V output before connecting to the Arduino and driver.
+- Secure all switches and connections to prevent accidental changes during operation.
 
 ## Future Improvements
 
-- Implement a user interface for real-time speed adjustments.
-- Add support for different tracking rates (solar, lunar, etc.).
+- Implement a user interface for real-time speed adjustments and planet selection.
+- Add support for more precise planetary tracking rates based on date and time.
 - Integrate limit switches for safety.
 - Implement a "park" position for easy setup and takedown.
 - Add a battery monitoring system to prevent over-discharge.
+- Develop a mobile app for remote control and monitoring.
 
 ## Contributing
 
