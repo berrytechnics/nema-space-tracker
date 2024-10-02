@@ -142,7 +142,7 @@ Contributions to improve the code or extend its functionality are welcome. Pleas
 
 This project is licensed under the MIT License with an additional attribution requirement. See the LICENSE file for details.
 
-Copyright (c) [year] [your name]
+Copyright (c) [2024] [J. Kyle Berry]
 
 Permission is granted to use, copy, modify, and distribute this software for any purpose with or without fee, provided that the above copyright notice and this permission notice appear in all copies, and that clear and visible credit is given to the original author in any use, distribution, or modification of this software.
 
