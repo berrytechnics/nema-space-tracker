@@ -4,21 +4,21 @@
 
 - [Amazon Link - A4988 Stepper Motor Driver](https://www.amazon.com/HiLetgo-Stepstick-Stepper-Printer-Compatible/dp/B07BND65C8/)
 - [Amazon Link - NEMA 17 Stepper Motor](https://www.amazon.com/STEPPERONLINE-Stepper-Bipolar-Connector-compatible/dp/B00PNEQKC0/)
-- [Amazon Link - Arduino Uno](https://www.amazon.com/ELEGOO-Board-ATmega328P-ATMEGA16U2-Compliant/dp/B01EWOE0UU/)
+- [Amazon Link - Arduino Nano (ATmega328P)](https://www.amazon.com/AYWHP-ATmega328P-Microcontroller-Compatible-Arduino/dp/B0DFGX3MSL/)
 - [Amazon Link - 3S LiPo Battery](https://www.amazon.com/Connector-Airplane-Helicopter-Quadcopter-Multi-Motor/dp/B07L6BNTDV/)
 - [Amazon Link - Buck Converter](https://www.amazon.com/DWEII-Current-Converter-Adjustable-Regulator/dp/B09XHSCC9G/)
 - [Amazon Link - SPDT Switches](https://www.amazon.com/Position-Breadboard-Electronic-Miniature-SlideSwitch/dp/B09R43HCY3/)
 
 ## Overview
 
-This project implements a versatile star tracker for astrophotography using an Arduino, a NEMA 17 stepper motor, and an A4988 stepper motor driver. The system is designed to counteract Earth's rotation, allowing for long-exposure photographs of both deep space objects and planets. It's powered by a LiPo battery and uses voltage converters for efficient power management. The tracker features two SPDT switches for easy configuration:
+This project implements a versatile star tracker for astrophotography using an Arduino Nano (ATmega328P-based), a NEMA 17 stepper motor, and an A4988 stepper motor driver. The system is designed to counteract Earth's rotation, allowing for long-exposure photographs of both deep space objects and planets. It's powered by a LiPo battery and uses voltage converters for efficient power management. The tracker features two SPDT switches for easy configuration:
 
 1. NS Switch: Selects between Northern and Southern hemisphere tracking.
 2. TARGET Switch: Toggles between deep space object and planetary tracking rates.
 
 ## Hardware Requirements
 
-- Arduino Uno board
+- Arduino Nano (ATmega328P-based)
 - NEMA 17 bipolar stepper motor
   - 59Ncm (83.6oz.in) holding torque
   - 1.65"x1.65"x1.89" 4-wire
@@ -26,14 +26,14 @@ This project implements a versatile star tracker for astrophotography using an A
   - Resistance: 1.4ohms
 - A4988 Stepper Motor Driver
 - 3S LiPo battery (11.1V nominal, 7000mAh capacity)
-- Buck converter (to step down battery voltage for Arduino Uno)
+- Buck converter (to step down battery voltage for Arduino Nano and A4988 logic)
 - 2x SPDT switches (for NS and TARGET selection)
 - Appropriate wiring and connectors
 
 ## Power Management
 
 - The 3S LiPo battery (11.1V nominal) powers the entire system.
-- A buck converter is used to step down the battery voltage to 5V for the Arduino and the A4988 driver's logic circuitry.
+- A buck converter is used to step down the battery voltage to 5V for the Arduino Nano and the A4988 driver's logic circuitry.
 - The A4988 driver is powered directly by the battery for the motor control.
 
 ## Software Dependencies
@@ -43,31 +43,31 @@ This project implements a versatile star tracker for astrophotography using an A
 
 ## Pin Configuration
 
-| Component     | Arduino Pin |
-| ------------- | ----------- |
-| STEP          | 3           |
-| DIR           | 2           |
-| MS1           | 5           |
-| MS2           | 6           |
-| MS3           | 7           |
-| ENABLE        | 8           |
-| NS Switch     | 4           |
-| TARGET Switch | 9           |
+| Component     | Arduino Nano Pin |
+| ------------- | ---------------- |
+| STEP          | D3               |
+| DIR           | D2               |
+| MS1           | D5               |
+| MS2           | D6               |
+| MS3           | D7               |
+| ENABLE        | D8               |
+| NS Switch     | D4               |
+| TARGET Switch | D9               |
 
 ## Setup Instructions
 
 1. Install the AccelStepper library in your Arduino IDE.
-2. Connect the A4988 driver to the Arduino as per the pin configuration table.
+2. Connect the A4988 driver to the Arduino Nano as per the pin configuration table.
 3. Connect the NEMA 17 stepper motor to the A4988 driver.
 4. Set up the power system:
    - Connect the LiPo battery to the buck converter input.
-   - Connect the buck converter output (set to 5V) to the Arduino's VIN and GND pins.
+   - Connect the buck converter output (set to 5V) to the Arduino Nano's VIN and GND pins.
    - Connect the battery directly to the VMOT and GND pins of the A4988 driver.
    - Connect the 5V output from the buck converter to the VDD pin of the A4988 driver.
 5. Connect the SPDT switches:
-   - NS Switch: Connect the common terminal to Arduino digital pin 4, one side to GND, and the other to 5V.
-   - TARGET Switch: Connect the common terminal to Arduino digital pin 9, one side to GND, and the other to 5V.
-6. Upload the provided code to your Arduino board.
+   - NS Switch: Connect the common terminal to Arduino Nano pin D4, one side to GND, and the other to 5V.
+   - TARGET Switch: Connect the common terminal to Arduino Nano pin D9, one side to GND, and the other to 5V.
+6. Connect the Arduino Nano to your computer via USB and upload the provided code using the Arduino IDE.
 
 ## Code Structure
 
@@ -111,6 +111,11 @@ This project implements a versatile star tracker for astrophotography using an A
 
 ## Debugging
 
+The Arduino Nano has a built-in USB-to-Serial converter, making debugging straightforward:
+
+- Connect the Arduino Nano to your computer via USB.
+- Open the Serial Monitor in the Arduino IDE to view debug output.
+
 The code includes optional serial output for debugging. Open the Serial Monitor in the Arduino IDE to view:
 
 - Initialization confirmation
@@ -122,8 +127,9 @@ The code includes optional serial output for debugging. Open the Serial Monitor 
 - Ensure proper cooling for the A4988 driver.
 - Adjust the current limit on the A4988 to match your motor's specifications.
 - Use caution when handling LiPo batteries. Follow proper charging and storage procedures.
-- Ensure the buck converter is properly set to 5V output before connecting to the Arduino and driver.
+- Ensure the buck converter is properly set to 5V output before connecting to the Arduino Nano and driver.
 - Secure all switches and connections to prevent accidental changes during operation.
+- When connecting the Arduino Nano, be careful not to apply more than 5V to its I/O pins to avoid damage.
 
 ## Future Improvements
 
@@ -133,6 +139,7 @@ The code includes optional serial output for debugging. Open the Serial Monitor 
 - Implement a "park" position for easy setup and takedown.
 - Add a battery monitoring system to prevent over-discharge.
 - Develop a mobile app for remote control and monitoring.
+- Design a custom shield or PCB for the Arduino Nano to create a more compact and robust setup.
 
 ## Contributing
 

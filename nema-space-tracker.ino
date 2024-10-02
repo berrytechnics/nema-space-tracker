@@ -10,7 +10,7 @@ const int ENABLE_PIN = 8;
 
 // Switch pins
 const int NS_SWITCH_PIN = 4;
-const int TARGET_SWITCH_PIN = 9;  // New pin for TARGET switch
+const int TARGET_SWITCH_PIN = 9; 
 
 // Motor specs
 const float STEP_ANGLE = 1.8;  // Most NEMA 17 motors have 1.8 degrees per step
@@ -23,8 +23,8 @@ const int STEPS_PER_REVOLUTION = 360 / STEP_ANGLE * MICROSTEPS * GEAR_RATIO;
 // Earth's rotation rate (degrees per hour)
 const float EARTH_ROTATION_RATE = 15.0;
 
-// Planetary tracking rate adjustment (example for Jupiter)
-const float PLANET_RATE_ADJUSTMENT = 0.083;  // Degrees per hour, varies by planet and date
+// Planetary tracking rate adjustment
+const float PLANET_RATE_ADJUSTMENT = 0.083;  // Degrees per hour, varies by planet and date (Jupiter as example)
 
 // Calculate steps per hour for sidereal and planetary tracking
 const long SIDEREAL_STEPS_PER_HOUR = (long)(EARTH_ROTATION_RATE / (STEP_ANGLE / MICROSTEPS / GEAR_RATIO) * 3600);
