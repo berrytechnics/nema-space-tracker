@@ -1,0 +1,69 @@
+#include <AccelStepper.h>
+
+// Motor and driver pins
+const int STEP_PIN = 3;
+const int DIR_PIN = 2;
+const int MS1_PIN = 5;
+const int MS2_PIN = 6;
+const int MS3_PIN = 7;
+const int ENABLE_PIN = 8;
+
+// Motor specs
+const float STEP_ANGLE = 1.8;  // Most NEMA 17 motors have 1.8 degrees per step
+const int MICROSTEPS = 16;     // Set to 16 microsteps for smoother motion
+const float GEAR_RATIO = 1;    // Adjust if you're using any external gearing
+
+// Calculate steps per revolution
+const int STEPS_PER_REVOLUTION = 360 / STEP_ANGLE * MICROSTEPS * GEAR_RATIO;
+
+// Earth's rotation rate (degrees per hour)
+const float EARTH_ROTATION_RATE = 15.0;
+
+// Calculate steps per hour for sidereal tracking
+const long STEPS_PER_HOUR = (long)(EARTH_ROTATION_RATE / (STEP_ANGLE / MICROSTEPS / GEAR_RATIO) * 3600);
+
+// Initialize the stepper motor
+AccelStepper stepper(AccelStepper::DRIVER, STEP_PIN, DIR_PIN);
+
+void setup() {
+  // Set up microstepping pins
+  pinMode(MS1_PIN, OUTPUT);
+  pinMode(MS2_PIN, OUTPUT);
+  pinMode(MS3_PIN, OUTPUT);
+  pinMode(ENABLE_PIN, OUTPUT);
+  
+  // Set microstepping to 1/16 (adjust these based on your A4988 configuration)
+  digitalWrite(MS1_PIN, HIGH);
+  digitalWrite(MS2_PIN, HIGH);
+  digitalWrite(MS3_PIN, HIGH);
+  
+  // Enable the motor driver
+  digitalWrite(ENABLE_PIN, LOW);
+  
+  // Set motor speed (steps per second)
+  stepper.setMaxSpeed(STEPS_PER_HOUR / 3600.0);
+  stepper.setSpeed(STEPS_PER_HOUR / 3600.0);
+  
+  // Optional: Set acceleration for smoother starts and stops
+  stepper.setAcceleration(100);
+
+  Serial.begin(9600);
+  Serial.println("Deep Space Object Tracker initialized");
+  Serial.print("Steps per revolution: ");
+  Serial.println(STEPS_PER_REVOLUTION);
+  Serial.print("Steps per hour: ");
+  Serial.println(STEPS_PER_HOUR);
+}
+
+void loop() {
+  // Run the motor continuously
+  stepper.runSpeed();
+
+  // Optional: Print current position every 10 seconds
+  static unsigned long lastPrintTime = 0;
+  if (millis() - lastPrintTime > 10000) {
+    Serial.print("Current position: ");
+    Serial.println(stepper.currentPosition());
+    lastPrintTime = millis();
+  }
+}
